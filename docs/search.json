@@ -4,13 +4,27 @@
     "href": "index.html",
     "title": "SOMA Data Lakehouse",
     "section": "",
-    "text": "To learn more about SOMA visit https://cepel.br/soma."
+    "text": "To learn more about SOMA visit http://www.cepel.br/produtos/gestao-de-ativos__trashed/soma-2/."
   },
   {
     "objectID": "about.html",
     "href": "about.html",
-    "title": "About",
+    "title": "About SOMA Data Lakehouse project",
     "section": "",
-    "text": "About SOMA Data Lakehouse project"
+    "text": "Data Lakehouse implementation based on Apache Arrow and Apache Parquet"
+  },
+  {
+    "objectID": "about.html#about-soma---asset-monitoring-oriented-system",
+    "href": "about.html#about-soma---asset-monitoring-oriented-system",
+    "title": "About SOMA Data Lakehouse project",
+    "section": "About SOMA - Asset Monitoring Oriented System",
+    "text": "About SOMA - Asset Monitoring Oriented System\n\nIndustry 4.0 technologies applied to the diagnosis and prognosis of electrical equipment\nOne of the main challenges for companies in managing their assets is the translation of large masses of monitoring data into useful information for maintenance managers. The solution for this is the adoption of automated monitoring systems, which aim to provide reliable access to information on the status of monitored assets, support decision-making, bring efficiency gains and remove the risk of human error.\nAs a result of extensive experience in monitoring and evaluating assets in the electricity sector, SOMA implements and makes available, in the companies’ Web environment, a Maintenance 4.0 architecture. Applying Industry 4.0 concepts to Maintenance Engineering , SOMA adopts technologies that include Internet of Things, state-of-the-art cybersecurity, digital twins , integration with other systems and cloud computing.\nSOMA is a flexible, robust and reliable system, focused on helping the management of physical assets, and which can be used to monitor various industrial processes. SOMA’s functionalities range from online monitoring of the equipment’s operating status by a maintenance technician to the diagnosis of its condition by a specialist engineer."
+  },
+  {
+    "objectID": "using-dlh.html",
+    "href": "using-dlh.html",
+    "title": "Using SOMA Data Lakehouse",
+    "section": "",
+    "text": "Java\nPython\nRust\nSQL"
   }
 ]
