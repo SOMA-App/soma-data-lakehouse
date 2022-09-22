@@ -1,0 +1,3 @@
+[submodule "quartosite"]
+	path = quartosite
+	url = git@github.com:SOMA-App/quartosite.git
