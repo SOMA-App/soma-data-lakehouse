@@ -2,6 +2,7 @@
 
 set -e
 
-quarto preview quartosite
-cp -r  quartosite/_site/* ./docs
+cd ../quartosite
+quarto render .
+cp -r  _site/* ../soma-data-lakehouse/docs
 
