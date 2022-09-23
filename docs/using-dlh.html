@@ -183,28 +183,63 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>SQL</li>
 </ul>
 <p>Below is an illustrative example of how to use SQL with Arrow and Datafusion in Python language.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip3 install jq pyarrow datafusion</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip3 install jq pyarrow datafusion pandas</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>Requirement already satisfied: jq in /usr/local/lib/python3.10/site-packages (1.3.0)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>Requirement already satisfied: pyarrow in /usr/local/lib/python3.10/site-packages (9.0.0)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>Requirement already satisfied: datafusion in /usr/local/lib/python3.10/site-packages (0.6.0)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>Requirement already satisfied: pandas in /usr/local/lib/python3.10/site-packages (1.5.0)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>Requirement already satisfied: numpy&gt;=1.16.6 in /usr/local/lib/python3.10/site-packages (from pyarrow) (1.23.3)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>Requirement already satisfied: python-dateutil&gt;=2.8.1 in /usr/local/lib/python3.10/site-packages (from pandas) (2.8.2)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>Requirement already satisfied: pytz&gt;=2020.1 in /usr/local/lib/python3.10/site-packages (from pandas) (2022.2.1)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>Requirement already satisfied: six&gt;=1.5 in /usr/local/lib/python3.10/site-packages (from python-dateutil&gt;=2.8.1-&gt;pandas) (1.16.0)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/usr/bin/env python3</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jq</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyarrow <span class="im">as</span> pa</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datafusion <span class="im">import</span> SessionContext</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>ctx <span class="op">=</span> SessionContext()</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># There is a thousand parquet files in this directory</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> <span class="st">'data/reusable/'</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>ctx.register_parquet(<span class="st">"soma"</span>, d)</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>sql_cmd <span class="op">=</span> <span class="st">"""</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="st"> SELECT ts, dsuuid, value</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="st">   FROM soma</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="st">  WHERE ts &gt; 1660771070001001</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="st">  LIMIT 10 </span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>rb <span class="op">=</span> ctx.sql(sql_cmd).collect()</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> pa.Table.from_batches(rb)</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(jq.<span class="bu">compile</span>(<span class="st">'.'</span>).<span class="bu">input</span>(t.to_pydict()).text())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/usr/bin/env python3</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jq</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyarrow <span class="im">as</span> pa</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datafusion <span class="im">import</span> SessionContext</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>ctx <span class="op">=</span> SessionContext()</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># There is a thousand parquet files in this directory</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> <span class="st">'data/reusable/'</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>ctx.register_parquet(<span class="st">"soma"</span>, d)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>sql_cmd <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="st"> SELECT date, ts, dsuuid, value</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="st">   FROM soma</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="st">  WHERE ts &gt; 1663368556001001</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>rb <span class="op">=</span> ctx.sql(sql_cmd).collect()</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>t1 <span class="op">=</span> pa.Table.from_batches(rb)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> t1.to_pandas()</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>first_five <span class="op">=</span> df.head()</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.describe())</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(first_five)</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>t2 <span class="op">=</span> pa.Table.from_pandas(first_five)</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(jq.<span class="bu">compile</span>(<span class="st">'.'</span>).<span class="bu">input</span>(t2.to_pydict()).text())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>{"ts": [1663368557001001, 1663368562001001, 1663368567001001, 1663368572001001, 1663368577001001, 1663368583001001, 1663368588001001, 1663368593001001, 1663368598001001, 1663368603001001], "dsuuid": ["DataSource_1f313b4b-078f-42e3-a205-069b1a3ce3cc", "DataSource_1f313b4b-078f-42e3-a205-069b1a3ce3cc", "DataSource_1f313b4b-078f-42e3-a205-069b1a3ce3cc", "DataSource_1f313b4b-078f-42e3-a205-069b1a3ce3cc", "DataSource_1f313b4b-078f-42e3-a205-069b1a3ce3cc", "DataSource_1f313b4b-078f-42e3-a205-069b1a3ce3cc", "DataSource_1f313b4b-078f-42e3-a205-069b1a3ce3cc", "DataSource_1f313b4b-078f-42e3-a205-069b1a3ce3cc", "DataSource_1f313b4b-078f-42e3-a205-069b1a3ce3cc", "DataSource_1f313b4b-078f-42e3-a205-069b1a3ce3cc"], "value": [0.7581206416540984, 0.44431534083976576, 0.006054972701061367, 0.30812750505238995, 0.5366034232685335, 0.12122750165370766, 0.6083049653841974, 0.21762746002423983, 0.07984399289471078, 0.9679669615528881]}</code></pre>
+<pre><code>                 ts         value
+count  6.514400e+04  65144.000000
+mean   1.663377e+15      0.499888
+std    4.807904e+09      0.288979
+min    1.663369e+15      0.000007
+25%    1.663372e+15      0.249125
+50%    1.663377e+15      0.500171
+75%    1.663381e+15      0.750609
+max    1.663385e+15      0.999981
+         date                ts  \
+0  2022-09-16  1663368557001001   
+1  2022-09-16  1663368562001001   
+2  2022-09-16  1663368567001001   
+3  2022-09-16  1663368572001001   
+4  2022-09-16  1663368577001001   
+
+                                            dsuuid     value  
+0  DataSource_e3590d55-c908-4734-abdb-d99c2c651e65  0.904426  
+1  DataSource_e3590d55-c908-4734-abdb-d99c2c651e65  0.707992  
+2  DataSource_e3590d55-c908-4734-abdb-d99c2c651e65  0.461823  
+3  DataSource_e3590d55-c908-4734-abdb-d99c2c651e65  0.218463  
+4  DataSource_e3590d55-c908-4734-abdb-d99c2c651e65  0.504273  
+{"date": ["2022-09-16", "2022-09-16", "2022-09-16", "2022-09-16", "2022-09-16"], "ts": [1663368557001001, 1663368562001001, 1663368567001001, 1663368572001001, 1663368577001001], "dsuuid": ["DataSource_e3590d55-c908-4734-abdb-d99c2c651e65", "DataSource_e3590d55-c908-4734-abdb-d99c2c651e65", "DataSource_e3590d55-c908-4734-abdb-d99c2c651e65", "DataSource_e3590d55-c908-4734-abdb-d99c2c651e65", "DataSource_e3590d55-c908-4734-abdb-d99c2c651e65"], "value": [0.9044257794425092, 0.7079920971278981, 0.4618225728657782, 0.2184628026169676, 0.5042734554836181]}</code></pre>
 </div>
 </div>
 
