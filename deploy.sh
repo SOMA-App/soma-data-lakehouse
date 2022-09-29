@@ -3,6 +3,6 @@
 set -e
 
 cd ../quartosite
-quarto render .
-cp -r  _site/* ../soma-data-lakehouse/docs
+quarto render src
+cp -r  src/_site/* ../soma-data-lakehouse/docs
 
