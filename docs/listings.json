@@ -1,0 +1,20 @@
+[
+  {
+    "listing": "/listing.html",
+    "items": [
+      "/index.html",
+      "/other.html",
+      "/about.html",
+      "/using-dlh.html"
+    ]
+  },
+  {
+    "listing": "/index.html",
+    "items": [
+      "/listing.html",
+      "/other.html",
+      "/about.html",
+      "/using-dlh.html"
+    ]
+  }
+]

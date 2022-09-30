@@ -6,6 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="dcterms.date" content="2022-09-28">
 
 <title>SOMA Data Lakehouse</title>
 <style>
@@ -24,6 +25,8 @@ ul.task-list{list-style: none;}
 <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
+<script src="site_libs/quarto-listing/list.min.js"></script>
+<script src="site_libs/quarto-listing/quarto-listing.js"></script>
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -52,12 +55,36 @@ ul.task-list{list-style: none;}
     "search-submit-button-title": "Submit"
   }
 }</script>
+<script>
 
+  window.document.addEventListener("DOMContentLoaded", function (_event) {
+    const listingTargetEl = window.document.querySelector('#listing-listing .list');
+    if (!listingTargetEl) {
+      // No listing discovered, do not attach.
+      return; 
+    }
+
+    const options = {
+      valueNames: ['listing-date','listing-title','listing-author','listing-subtitle','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      
+      searchColumns: ["listing-date","listing-title","listing-author","listing-subtitle","listing-image","listing-description","listing-categories"],
+    };
+
+    window['quarto-listings'] = window['quarto-listings'] || {};
+    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
+
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  });
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="nav-fixed">
+<body class="floating nav-fixed slimcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -87,37 +114,233 @@ ul.task-list{list-style: none;}
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">SOMA Data Lakehouse</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">Home</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">September 28, 2022</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#navigation-by-tags" id="toc-navigation-by-tags" class="nav-link" data-scroll-target="#navigation-by-tags">Navigation By TAGS</a></li>
+  <li><a href="#all-content-select-by-tag" id="toc-all-content-select-by-tag" class="nav-link" data-scroll-target="#all-content-select-by-tag">All content select by TAG</a></li>
+  </ul>
+</nav>
+</nav>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    </div>
+    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(4)</span></div><div class="category" data-category="Analytics">Analytics <span class="quarto-category-count">(3)</span></div><div class="category" data-category="DataLake">DataLake <span class="quarto-category-count">(3)</span></div><div class="category" data-category="IA">IA <span class="quarto-category-count">(3)</span></div><div class="category" data-category="IoT">IoT <span class="quarto-category-count">(1)</span></div><div class="category" data-category="ML">ML <span class="quarto-category-count">(1)</span></div></div></div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">SOMA Data Lakehouse</h1>
-</div>
+<main class="content quarto-banner-title-block page-columns page-full" id="quarto-document-content">
 
 
 
-<div class="quarto-title-meta">
 
-    
-    
-  </div>
-  
-
-</header>
-
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>This is a SOMA Data Lakehouse website.</p>
 <p>To learn more about SOMA visit <a href="http://www.cepel.br/produtos/gestao-de-ativos__trashed/soma-2/" class="uri">http://www.cepel.br/produtos/gestao-de-ativos__trashed/soma-2/</a>.</p>
+<p>To know about IoT and SOMA <a href="about.html#industry-4.0-technologies-applied-to-the-diagnosis-and-prognosis-of-machines-and-equipments">see this post</a></p>
+</section>
+<section id="navigation-by-tags" class="level2">
+<h2 class="anchored" data-anchor-id="navigation-by-tags">Navigation By TAGS</h2>
+<p>Amazing tags: <a href="#category=SOMA">#SOMA</a>, <a href="./#category=IoT">#IoT</a>, <a href="./#category=ML">#ML</a>, <a href="./#category=AssetManagement">#AssetManagement</a></p>
+</section>
+<section id="all-content-select-by-tag" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="all-content-select-by-tag">All content select by TAG</h2>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>A comment in the margin with a bunch of text:</p>
+</div><div class="">
+<p>The Unified Modeling Language (UML) is a general-purpose, developmental modeling language in the field of software engineering that is intended to provide a standard way to visualize the design of a system.</p>
+</div><div class="">
+<p>The creation of UML was originally motivated by the desire to standardize the disparate notational systems and approaches to software design. It was developed at Rational Software in 1994–1995, with further development led by them through 1996.</p>
+</div><div class="">
+<p>In 1997, UML was adopted as a standard by the Object Management Group (OMG), and has been managed by this organization ever since. In 2005, UML was also published by the International Organization for Standardization (ISO) as an approved ISO standard. Since then the standard has been periodically revised to cover the latest revision of UML. In software engineering, most practitioners do not use UML, but instead produce informal hand drawn diagrams; these diagrams, however, often include elements from UML.  </p>
+</div></div>
 
 
 
-</main> <!-- /main -->
+
+
+</section>
+
+<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
+<div class="list quarto-listing-default">
+<div class="quarto-post image-right" data-index="0" data-listing-file-modified-sort="1664419862709" data-listing-reading-time-sort="0.05">
+<div class="thumbnail">
+<a href="./listing.html">
+<div class="thumbnail-image">
+
+</div>
+</a><p><a href="./listing.html"></a></p>
+</div>
+<div class="body">
+<a href="./listing.html">
+<h3 class="no-anchor listing-title">
+Listing Example
+</h3>
+<div class="listing-subtitle">
+
+</div>
+<div class="listing-description">
+You can review the following documents for additional information:
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./listing.html"> </a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="1" data-categories="DataLake,IA,Analytics" data-listing-date-sort="1664334000000" data-listing-file-modified-sort="1664404307853" data-listing-reading-time-sort="0.055">
+<div class="thumbnail">
+<p><a href="./other.html"> <img src="./img/preview.jpg" class="thumnail-image"> </a></p>
+</div>
+<div class="body">
+<a href="./other.html">
+<h3 class="no-anchor listing-title">
+Other Content
+</h3>
+<div class="listing-subtitle">
+
+</div>
+</a>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('DataLake'); return false;">
+DataLake
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('IA'); return false;">
+IA
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Analytics'); return false;">
+Analytics
+</div>
+</div>
+<a href="./other.html">
+<div class="listing-description">
+This is a Test 01
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./other.html">
+<div class="listing-date">
+Sep 28, 2022
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="2" data-categories="DataLake,IA,Analytics" data-listing-date-sort="1664334000000" data-listing-file-modified-sort="1664404369602" data-listing-reading-time-sort="0.955">
+<div class="thumbnail">
+<p><a href="./about.html"> <img src="./img/preview.jpg" class="thumnail-image"> </a></p>
+</div>
+<div class="body">
+<a href="./about.html">
+<h3 class="no-anchor listing-title">
+About SOMA Data Lakehouse
+</h3>
+<div class="listing-subtitle">
+
+</div>
+</a>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('DataLake'); return false;">
+DataLake
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('IA'); return false;">
+IA
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Analytics'); return false;">
+Analytics
+</div>
+</div>
+<a href="./about.html">
+<div class="listing-description">
+<img src="big-data-analytics-today.jpg" class="img-fluid figure-img">
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./about.html">
+<div class="listing-date">
+Sep 28, 2022
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="3" data-categories="DataLake,IA,Analytics,IoT,ML" data-listing-date-sort="1664247600000" data-listing-file-modified-sort="1664419132003" data-listing-reading-time-sort="0.77">
+<div class="thumbnail">
+<p><a href="./using-dlh.html"> <img src="./img/preview.jpg" class="thumnail-image"> </a></p>
+</div>
+<div class="body">
+<a href="./using-dlh.html">
+<h3 class="no-anchor listing-title">
+Using SOMA Data Lakehouse
+</h3>
+<div class="listing-subtitle">
+<p>Here you can learn about using Data Lakehouse to do Machine Learning training and large scale data analysis. toc: true</p>
+</div>
+</a>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('DataLake'); return false;">
+DataLake
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('IA'); return false;">
+IA
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Analytics'); return false;">
+Analytics
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('IoT'); return false;">
+IoT
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('ML'); return false;">
+ML
+</div>
+</div>
+<a href="./using-dlh.html">
+<div class="listing-description">
+To use SOMA Data Lakehouse you need some experience in at least one of the following programming languages:
+</div>
+</a>
+</div>
+<div class="metadata">
+<a href="./using-dlh.html">
+<div class="listing-date">
+Sep 27, 2022
+</div>
+</a>
+</div>
+</div>
+</div>
+<div class="listing-no-matching d-none">
+No matching items
+</div>
+</div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const icon = "";

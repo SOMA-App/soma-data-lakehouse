@@ -1,10 +1,31 @@
 [
   {
+    "objectID": "listing.html",
+    "href": "listing.html",
+    "title": "Listing Example",
+    "section": "",
+    "text": "Order By\n       Default\n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n         \n          Title\n        \n         \n          Author\n        \n     \n  \n    \n      \n      \n    \n\n\n\n\n\n\nDate\n\n\nTitle\n\n\nAuthor\n\n\n\n\n\n\nSep 28, 2022\n\n\nSOMA Data Lakehouse\n\n\n\n\n\n\nSep 28, 2022\n\n\nOther Content\n\n\n\n\n\n\nSep 28, 2022\n\n\nAbout SOMA Data Lakehouse\n\n\n\n\n\n\nSep 27, 2022\n\n\nUsing SOMA Data Lakehouse\n\n\n\n\n\n\n\n\nNo matching items"
+  },
+  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "SOMA Data Lakehouse",
     "section": "",
-    "text": "To learn more about SOMA visit http://www.cepel.br/produtos/gestao-de-ativos__trashed/soma-2/."
+    "text": "This is a SOMA Data Lakehouse website.\nTo learn more about SOMA visit http://www.cepel.br/produtos/gestao-de-ativos__trashed/soma-2/.\nTo know about IoT and SOMA see this post"
+  },
+  {
+    "objectID": "index.html#navigation-by-tags",
+    "href": "index.html#navigation-by-tags",
+    "title": "SOMA Data Lakehouse",
+    "section": "Navigation By TAGS",
+    "text": "Navigation By TAGS\nAmazing tags: #SOMA, #IoT, #ML, #AssetManagement"
+  },
+  {
+    "objectID": "index.html#all-content-select-by-tag",
+    "href": "index.html#all-content-select-by-tag",
+    "title": "SOMA Data Lakehouse",
+    "section": "All content select by TAG",
+    "text": "All content select by TAG\n\n\nA comment in the margin with a bunch of text:\n\nThe Unified Modeling Language (UML) is a general-purpose, developmental modeling language in the field of software engineering that is intended to provide a standard way to visualize the design of a system.\n\nThe creation of UML was originally motivated by the desire to standardize the disparate notational systems and approaches to software design. It was developed at Rational Software in 1994–1995, with further development led by them through 1996.\n\nIn 1997, UML was adopted as a standard by the Object Management Group (OMG), and has been managed by this organization ever since. In 2005, UML was also published by the International Organization for Standardization (ISO) as an approved ISO standard. Since then the standard has been periodically revised to cover the latest revision of UML. In software engineering, most practitioners do not use UML, but instead produce informal hand drawn diagrams; these diagrams, however, often include elements from UML."
   },
   {
     "objectID": "about.html",
@@ -25,6 +46,27 @@
     "href": "using-dlh.html",
     "title": "Using SOMA Data Lakehouse",
     "section": "",
-    "text": "Java\nPython\nRust\nSQL\n\nBelow is an illustrative example of how to use SQL with Arrow and Datafusion in Python language.\n!pip3 install jq pyarrow datafusion pandas\nRequirement already satisfied: jq in /usr/local/lib/python3.10/site-packages (1.3.0)\nRequirement already satisfied: pyarrow in /usr/local/lib/python3.10/site-packages (9.0.0)\nRequirement already satisfied: datafusion in /usr/local/lib/python3.10/site-packages (0.6.0)\nRequirement already satisfied: pandas in /usr/local/lib/python3.10/site-packages (1.5.0)\nRequirement already satisfied: numpy>=1.16.6 in /usr/local/lib/python3.10/site-packages (from pyarrow) (1.23.3)\nRequirement already satisfied: python-dateutil>=2.8.1 in /usr/local/lib/python3.10/site-packages (from pandas) (2.8.2)\nRequirement already satisfied: pytz>=2020.1 in /usr/local/lib/python3.10/site-packages (from pandas) (2022.2.1)\nRequirement already satisfied: six>=1.5 in /usr/local/lib/python3.10/site-packages (from python-dateutil>=2.8.1->pandas) (1.16.0)\n\n#!/usr/bin/env python3\n\nimport jq\nimport pandas as pd\nimport pyarrow as pa\nfrom datafusion import SessionContext\nctx = SessionContext()\n# There is a thousand parquet files in this directory\nd = 'data/reusable/'\nctx.register_parquet(\"soma\", d)\nsql_cmd = \"\"\"\n SELECT date, ts, dsuuid, value\n   FROM soma\n  WHERE ts > 1663368556001001\n\"\"\"\nrb = ctx.sql(sql_cmd).collect()\nt1 = pa.Table.from_batches(rb)\ndf = t1.to_pandas()\nfirst_five = df.head()\nprint(df.describe())\nprint(first_five)\nt2 = pa.Table.from_pandas(first_five)\nprint(jq.compile('.').input(t2.to_pydict()).text())\n\n                 ts         value\ncount  6.514400e+04  65144.000000\nmean   1.663377e+15      0.499888\nstd    4.807904e+09      0.288979\nmin    1.663369e+15      0.000007\n25%    1.663372e+15      0.249125\n50%    1.663377e+15      0.500171\n75%    1.663381e+15      0.750609\nmax    1.663385e+15      0.999981\n         date                ts  \\\n0  2022-09-16  1663368557001001   \n1  2022-09-16  1663368562001001   \n2  2022-09-16  1663368567001001   \n3  2022-09-16  1663368572001001   \n4  2022-09-16  1663368577001001   \n\n                                            dsuuid     value  \n0  DataSource_e3590d55-c908-4734-abdb-d99c2c651e65  0.904426  \n1  DataSource_e3590d55-c908-4734-abdb-d99c2c651e65  0.707992  \n2  DataSource_e3590d55-c908-4734-abdb-d99c2c651e65  0.461823  \n3  DataSource_e3590d55-c908-4734-abdb-d99c2c651e65  0.218463  \n4  DataSource_e3590d55-c908-4734-abdb-d99c2c651e65  0.504273  \n{\"date\": [\"2022-09-16\", \"2022-09-16\", \"2022-09-16\", \"2022-09-16\", \"2022-09-16\"], \"ts\": [1663368557001001, 1663368562001001, 1663368567001001, 1663368572001001, 1663368577001001], \"dsuuid\": [\"DataSource_e3590d55-c908-4734-abdb-d99c2c651e65\", \"DataSource_e3590d55-c908-4734-abdb-d99c2c651e65\", \"DataSource_e3590d55-c908-4734-abdb-d99c2c651e65\", \"DataSource_e3590d55-c908-4734-abdb-d99c2c651e65\", \"DataSource_e3590d55-c908-4734-abdb-d99c2c651e65\"], \"value\": [0.9044257794425092, 0.7079920971278981, 0.4618225728657782, 0.2184628026169676, 0.5042734554836181]}"
+    "text": "To use SOMA Data Lakehouse you need some experience in at least one of the following programming languages:\n\nJava\nPython\nRust\nSQL"
+  },
+  {
+    "objectID": "using-dlh.html#python-3-example",
+    "href": "using-dlh.html#python-3-example",
+    "title": "Using SOMA Data Lakehouse",
+    "section": "Python 3 Example",
+    "text": "Python 3 Example\nBelow is an illustrative example of how to use SQL with Arrow and Datafusion in Python language.\n!pip3 install jq pyarrow datafusion pandas\nRequirement already satisfied: jq in /usr/local/lib/python3.10/site-packages (1.3.0)\nRequirement already satisfied: pyarrow in /usr/local/lib/python3.10/site-packages (9.0.0)\nRequirement already satisfied: datafusion in /usr/local/lib/python3.10/site-packages (0.6.0)\nRequirement already satisfied: pandas in /usr/local/lib/python3.10/site-packages (1.5.0)\nRequirement already satisfied: numpy>=1.16.6 in /usr/local/lib/python3.10/site-packages (from pyarrow) (1.23.3)\nRequirement already satisfied: python-dateutil>=2.8.1 in /usr/local/lib/python3.10/site-packages (from pandas) (2.8.2)\nRequirement already satisfied: pytz>=2020.1 in /usr/local/lib/python3.10/site-packages (from pandas) (2022.2.1)\nRequirement already satisfied: six>=1.5 in /usr/local/lib/python3.10/site-packages (from python-dateutil>=2.8.1->pandas) (1.16.0)\n\n#!/usr/bin/env python3\n\nimport jq\nimport pandas as pd\nimport pyarrow as pa\nfrom datafusion import SessionContext\nctx = SessionContext()\n# There is a thousand parquet files in this directory\nd = '../data/reusable/'\nctx.register_parquet(\"soma\", d)\nsql_cmd = \"\"\"\n SELECT year, week, ts, dsuuid, value\n   FROM soma\n  WHERE ts > 1663368556001001\n\"\"\"\nrb = ctx.sql(sql_cmd).collect()\nt1 = pa.Table.from_batches(rb)\ndf = t1.to_pandas()\nfirst_five = df.head()\nprint(df.describe())\nprint(first_five)\nt2 = pa.Table.from_pandas(first_five)\nprint(jq.compile('.').input(t2.to_pydict()).text())\n\n         year    week            ts        value\ncount  2667.0  2667.0  2.667000e+03  2667.000000\nmean   2022.0    39.0  1.664247e+15     0.495656\nstd       0.0     0.0  1.960571e+09     0.287926\nmin    2022.0    39.0  1.664244e+15     0.000135\n25%    2022.0    39.0  1.664246e+15     0.245338\n50%    2022.0    39.0  1.664247e+15     0.495876\n75%    2022.0    39.0  1.664249e+15     0.745976\nmax    2022.0    39.0  1.664251e+15     0.999631\n   year  week                ts  \\\n0  2022    39  1664247554001001   \n1  2022    39  1664247559001001   \n2  2022    39  1664247564001001   \n3  2022    39  1664249039001001   \n4  2022    39  1664249044001001   \n\n                                            dsuuid     value  \n0  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  0.336882  \n1  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  0.177145  \n2  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  0.116004  \n3  DataSource_18de68d3-e1d3-45d6-b3da-7a851067aeaa  0.414591  \n4  DataSource_18de68d3-e1d3-45d6-b3da-7a851067aeaa  0.351123  \n{\"year\": [2022, 2022, 2022, 2022, 2022], \"week\": [39, 39, 39, 39, 39], \"ts\": [1664247554001001, 1664247559001001, 1664247564001001, 1664249039001001, 1664249044001001], \"dsuuid\": [\"DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44\", \"DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44\", \"DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44\", \"DataSource_18de68d3-e1d3-45d6-b3da-7a851067aeaa\", \"DataSource_18de68d3-e1d3-45d6-b3da-7a851067aeaa\"], \"value\": [0.3368821186734162, 0.17714492564570572, 0.1160042410052613, 0.41459125699470545, 0.35112252323731696]}"
+  },
+  {
+    "objectID": "other.html",
+    "href": "other.html",
+    "title": "Other Content",
+    "section": "",
+    "text": "This is a Test 01"
+  },
+  {
+    "objectID": "other.html#test-02",
+    "href": "other.html#test-02",
+    "title": "Other Content",
+    "section": "Test 02",
+    "text": "Test 02\nThis is a Test 02"
   }
 ]

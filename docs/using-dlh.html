@@ -6,6 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="dcterms.date" content="2022-09-27">
 
 <title>SOMA Data Lakehouse - Using SOMA Data Lakehouse</title>
 <style>
@@ -120,7 +121,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="nav-fixed">
+<body class="floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -150,31 +151,58 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Using SOMA Data Lakehouse</h1>
+            <p class="subtitle lead"></p><p>Here you can learn about using Data Lakehouse to do Machine Learning training and large scale data analysis. toc: true</p><p></p>
+                                <div class="quarto-categories">
+                <div class="quarto-category">DataLake</div>
+                <div class="quarto-category">IA</div>
+                <div class="quarto-category">Analytics</div>
+                <div class="quarto-category">IoT</div>
+                <div class="quarto-category">ML</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">September 27, 2022</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#python-3-example" id="toc-python-3-example" class="nav-link" data-scroll-target="#python-3-example">Python 3 Example</a></li>
+  </ul>
+</nav>
+</nav>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Using SOMA Data Lakehouse</h1>
-</div>
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
 
-<div class="quarto-title-meta">
 
-    
-    
-  </div>
-  
-
-</header>
-
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>To use SOMA Data Lakehouse you need some experience in at least one of the following programming languages:</p>
 <ul>
 <li>Java</li>
@@ -182,6 +210,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>Rust</li>
 <li>SQL</li>
 </ul>
+</section>
+<section id="python-3-example" class="level2">
+<h2 class="anchored" data-anchor-id="python-3-example">Python 3 Example</h2>
 <p>Below is an illustrative example of how to use SQL with Arrow and Datafusion in Python language.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip3 install jq pyarrow datafusion pandas</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="sourceCode" id="cb2"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>Requirement already satisfied: jq in /usr/local/lib/python3.10/site-packages (1.3.0)</span>
@@ -201,10 +232,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datafusion <span class="im">import</span> SessionContext</span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>ctx <span class="op">=</span> SessionContext()</span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># There is a thousand parquet files in this directory</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> <span class="st">'data/reusable/'</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> <span class="st">'../data/reusable/'</span></span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>ctx.register_parquet(<span class="st">"soma"</span>, d)</span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>sql_cmd <span class="op">=</span> <span class="st">"""</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="st"> SELECT date, ts, dsuuid, value</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="st"> SELECT year, week, ts, dsuuid, value</span></span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="st">   FROM soma</span></span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="st">  WHERE ts &gt; 1663368556001001</span></span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
@@ -217,33 +248,34 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>t2 <span class="op">=</span> pa.Table.from_pandas(first_five)</span>
 <span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(jq.<span class="bu">compile</span>(<span class="st">'.'</span>).<span class="bu">input</span>(t2.to_pydict()).text())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>                 ts         value
-count  6.514400e+04  65144.000000
-mean   1.663377e+15      0.499888
-std    4.807904e+09      0.288979
-min    1.663369e+15      0.000007
-25%    1.663372e+15      0.249125
-50%    1.663377e+15      0.500171
-75%    1.663381e+15      0.750609
-max    1.663385e+15      0.999981
-         date                ts  \
-0  2022-09-16  1663368557001001   
-1  2022-09-16  1663368562001001   
-2  2022-09-16  1663368567001001   
-3  2022-09-16  1663368572001001   
-4  2022-09-16  1663368577001001   
+<pre><code>         year    week            ts        value
+count  2667.0  2667.0  2.667000e+03  2667.000000
+mean   2022.0    39.0  1.664247e+15     0.495656
+std       0.0     0.0  1.960571e+09     0.287926
+min    2022.0    39.0  1.664244e+15     0.000135
+25%    2022.0    39.0  1.664246e+15     0.245338
+50%    2022.0    39.0  1.664247e+15     0.495876
+75%    2022.0    39.0  1.664249e+15     0.745976
+max    2022.0    39.0  1.664251e+15     0.999631
+   year  week                ts  \
+0  2022    39  1664247554001001   
+1  2022    39  1664247559001001   
+2  2022    39  1664247564001001   
+3  2022    39  1664249039001001   
+4  2022    39  1664249044001001   
 
                                             dsuuid     value  
-0  DataSource_e3590d55-c908-4734-abdb-d99c2c651e65  0.904426  
-1  DataSource_e3590d55-c908-4734-abdb-d99c2c651e65  0.707992  
-2  DataSource_e3590d55-c908-4734-abdb-d99c2c651e65  0.461823  
-3  DataSource_e3590d55-c908-4734-abdb-d99c2c651e65  0.218463  
-4  DataSource_e3590d55-c908-4734-abdb-d99c2c651e65  0.504273  
-{"date": ["2022-09-16", "2022-09-16", "2022-09-16", "2022-09-16", "2022-09-16"], "ts": [1663368557001001, 1663368562001001, 1663368567001001, 1663368572001001, 1663368577001001], "dsuuid": ["DataSource_e3590d55-c908-4734-abdb-d99c2c651e65", "DataSource_e3590d55-c908-4734-abdb-d99c2c651e65", "DataSource_e3590d55-c908-4734-abdb-d99c2c651e65", "DataSource_e3590d55-c908-4734-abdb-d99c2c651e65", "DataSource_e3590d55-c908-4734-abdb-d99c2c651e65"], "value": [0.9044257794425092, 0.7079920971278981, 0.4618225728657782, 0.2184628026169676, 0.5042734554836181]}</code></pre>
+0  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  0.336882  
+1  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  0.177145  
+2  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  0.116004  
+3  DataSource_18de68d3-e1d3-45d6-b3da-7a851067aeaa  0.414591  
+4  DataSource_18de68d3-e1d3-45d6-b3da-7a851067aeaa  0.351123  
+{"year": [2022, 2022, 2022, 2022, 2022], "week": [39, 39, 39, 39, 39], "ts": [1664247554001001, 1664247559001001, 1664247564001001, 1664249039001001, 1664249044001001], "dsuuid": ["DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44", "DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44", "DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44", "DataSource_18de68d3-e1d3-45d6-b3da-7a851067aeaa", "DataSource_18de68d3-e1d3-45d6-b3da-7a851067aeaa"], "value": [0.3368821186734162, 0.17714492564570572, 0.1160042410052613, 0.41459125699470545, 0.35112252323731696]}</code></pre>
 </div>
 </div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
