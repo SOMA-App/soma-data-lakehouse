@@ -214,7 +214,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="python-3-example" class="level2">
 <h2 class="anchored" data-anchor-id="python-3-example">Python 3 Example</h2>
 <p>Below is an illustrative example of how to use SQL with Arrow and Datafusion in Python language.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip3 install jq pyarrow datafusion pandas</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip3 install jq pyarrow datafusion pandas matplotlib scipy</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="sourceCode" id="cb2"><pre class="sourceCode txt code-with-copy"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>Requirement already satisfied: jq in /usr/local/lib/python3.10/site-packages (1.3.0)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>Requirement already satisfied: pyarrow in /usr/local/lib/python3.10/site-packages (9.0.0)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>Requirement already satisfied: datafusion in /usr/local/lib/python3.10/site-packages (0.6.0)</span>
@@ -226,51 +226,271 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/usr/bin/env python3</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jq</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyarrow <span class="im">as</span> pa</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datafusion <span class="im">import</span> SessionContext</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>ctx <span class="op">=</span> SessionContext()</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># There is a thousand parquet files in this directory</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> <span class="st">'../data/reusable/'</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>ctx.register_parquet(<span class="st">"soma"</span>, d)</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>sql_cmd <span class="op">=</span> <span class="st">"""</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="st"> SELECT year, week, ts, dsuuid, value</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="st">   FROM soma</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="st">  WHERE ts &gt; 1663368556001001</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>rb <span class="op">=</span> ctx.sql(sql_cmd).collect()</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>t1 <span class="op">=</span> pa.Table.from_batches(rb)</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> t1.to_pandas()</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>first_five <span class="op">=</span> df.head()</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.describe())</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(first_five)</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>t2 <span class="op">=</span> pa.Table.from_pandas(first_five)</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(jq.<span class="bu">compile</span>(<span class="st">'.'</span>).<span class="bu">input</span>(t2.to_pydict()).text())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyarrow <span class="im">as</span> pa</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datafusion <span class="im">import</span> SessionContext</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>ctx <span class="op">=</span> SessionContext()</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># There is a thousand parquet files in this directory</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> <span class="st">'../data/reusable/'</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>ctx.register_parquet(<span class="st">"soma"</span>, d)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>sql_cmd <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="st"> SELECT count(ts) as qty</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="st">   FROM soma</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>rb <span class="op">=</span> ctx.sql(sql_cmd).collect()</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>t1 <span class="op">=</span> pa.Table.from_batches(rb)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Quantidade de registros no Dataset ="</span>, t1[<span class="dv">0</span>][<span class="dv">0</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>         year    week            ts        value
-count  2667.0  2667.0  2.667000e+03  2667.000000
-mean   2022.0    39.0  1.664247e+15     0.495656
-std       0.0     0.0  1.960571e+09     0.287926
-min    2022.0    39.0  1.664244e+15     0.000135
-25%    2022.0    39.0  1.664246e+15     0.245338
-50%    2022.0    39.0  1.664247e+15     0.495876
-75%    2022.0    39.0  1.664249e+15     0.745976
-max    2022.0    39.0  1.664251e+15     0.999631
+<pre><code>Quantidade de registros no Dataset = 8712000</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/usr/bin/env python3</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyarrow <span class="im">as</span> pa</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datafusion <span class="im">import</span> SessionContext</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>ctx <span class="op">=</span> SessionContext()</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"># There is a thousand parquet files in this directory</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> <span class="st">'../data/reusable/'</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>ctx.register_parquet(<span class="st">"soma"</span>, d)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>sql_cmd <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="st">  SELECT dsuuid,  count(dsuuid) as qty</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="st">    FROM soma</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="st">GROUP BY dsuuid</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>rb <span class="op">=</span> ctx.sql(sql_cmd).collect()</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>t1 <span class="op">=</span> pa.Table.from_batches(rb)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> t1.to_pandas()</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                             dsuuid     qty
+0   DataSource_7cc50f92-9c10-4527-95ec-4b952718352b  396000
+1   DataSource_18de68d3-e1d3-45d6-b3da-7a851067aeaa  396000
+2   DataSource_dd860dd6-1450-46a8-8d9c-e9ab9b47f7e6  396000
+3   DataSource_cbe8a9af-2d93-47e6-88c9-7991f71168c2  396000
+4   DataSource_d85a1f65-57eb-4362-a791-ccff043acf43  396000
+5   DataSource_e0bdb337-49ae-468e-93b1-be1dd96baed3  396000
+6   DataSource_ac7c39d3-7bdd-4f2a-a075-5b24da3137e0  396000
+7   DataSource_78686cdb-4144-4c6f-9e7e-66ba06871328  396000
+8   DataSource_609574d4-e153-445f-a37c-b893ecb0c5fd  396000
+9   DataSource_270a0dd5-7868-4431-a29d-374a6f221693  396000
+10  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  396000
+11  DataSource_da2a80a7-a610-4a32-adae-6e829db2c889  396000
+12  DataSource_4c3fd574-3795-4af3-959f-d5e433065db7  396000
+13  DataSource_d3ab801b-ec8e-4208-952e-d92dc16627db  396000
+14  DataSource_6233a59a-d614-4d1e-ab48-a0e8958523fc  396000
+15  DataSource_1116286a-d12a-4a0c-b421-c9b57dd7f008  396000
+16  DataSource_9bb6bdda-fb8c-4c02-88fc-fd73fda6f14a  396000
+17  DataSource_1f313b4b-078f-42e3-a205-069b1a3ce3cc  396000
+18  DataSource_686af5de-ea63-4250-bcf5-1a5e791d3f1a  396000
+19  DataSource_d73fdb99-da74-4465-a56c-36d138a47382  396000
+20  DataSource_1d1adb59-f1d3-4e71-a0a4-cd124c0bea0b  396000
+21  DataSource_e3590d55-c908-4734-abdb-d99c2c651e65  396000</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/usr/bin/env python3</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jq</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyarrow <span class="im">as</span> pa</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datafusion <span class="im">import</span> SessionContext</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>ctx <span class="op">=</span> SessionContext()</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co"># There is a thousand parquet files in this directory</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> <span class="st">'../data/reusable/'</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>ctx.register_parquet(<span class="st">"soma"</span>, d)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>sql_cmd <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="st"> SELECT year, week, ts, dsuuid, value</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="st">   FROM soma</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>rb <span class="op">=</span> ctx.sql(sql_cmd).collect()</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>t1 <span class="op">=</span> pa.Table.from_batches(rb)</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> t1.to_pandas()</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>first_five <span class="op">=</span> df.head()</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.describe())</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(first_five)</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>t2 <span class="op">=</span> pa.Table.from_pandas(first_five)</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(jq.<span class="bu">compile</span>(<span class="st">'.'</span>).<span class="bu">input</span>(t2.to_pydict()).text())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>            year       week            ts         value
+count  8712000.0  8712000.0  8.712000e+06  8.712000e+06
+mean      2019.0        9.0  1.551399e+15  2.641600e+00
+std          0.0        0.0  5.196205e+08  2.887040e-01
+min       2019.0        9.0  1.551398e+15  2.141600e+00
+25%       2019.0        9.0  1.551399e+15  2.391600e+00
+50%       2019.0        9.0  1.551399e+15  2.641600e+00
+75%       2019.0        9.0  1.551400e+15  2.891600e+00
+max       2019.0        9.0  1.551400e+15  3.141600e+00
    year  week                ts  \
-0  2022    39  1664247554001001   
-1  2022    39  1664247559001001   
-2  2022    39  1664247564001001   
-3  2022    39  1664249039001001   
-4  2022    39  1664249044001001   
+0  2019     9  1551398400000001   
+1  2019     9  1551398400004546   
+2  2019     9  1551398400009092   
+3  2019     9  1551398400013637   
+4  2019     9  1551398400018183   
 
-                                            dsuuid     value  
-0  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  0.336882  
-1  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  0.177145  
-2  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  0.116004  
-3  DataSource_18de68d3-e1d3-45d6-b3da-7a851067aeaa  0.414591  
-4  DataSource_18de68d3-e1d3-45d6-b3da-7a851067aeaa  0.351123  
-{"year": [2022, 2022, 2022, 2022, 2022], "week": [39, 39, 39, 39, 39], "ts": [1664247554001001, 1664247559001001, 1664247564001001, 1664249039001001, 1664249044001001], "dsuuid": ["DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44", "DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44", "DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44", "DataSource_18de68d3-e1d3-45d6-b3da-7a851067aeaa", "DataSource_18de68d3-e1d3-45d6-b3da-7a851067aeaa"], "value": [0.3368821186734162, 0.17714492564570572, 0.1160042410052613, 0.41459125699470545, 0.35112252323731696]}</code></pre>
+                                            dsuuid   value  
+0  DataSource_d73fdb99-da74-4465-a56c-36d138a47382  3.1416  
+1  DataSource_d73fdb99-da74-4465-a56c-36d138a47382  3.1316  
+2  DataSource_d73fdb99-da74-4465-a56c-36d138a47382  3.1216  
+3  DataSource_d73fdb99-da74-4465-a56c-36d138a47382  3.1116  
+4  DataSource_d73fdb99-da74-4465-a56c-36d138a47382  3.1016  
+{"year": [2019, 2019, 2019, 2019, 2019], "week": [9, 9, 9, 9, 9], "ts": [1551398400000001, 1551398400004546, 1551398400009092, 1551398400013637, 1551398400018183], "dsuuid": ["DataSource_d73fdb99-da74-4465-a56c-36d138a47382", "DataSource_d73fdb99-da74-4465-a56c-36d138a47382", "DataSource_d73fdb99-da74-4465-a56c-36d138a47382", "DataSource_d73fdb99-da74-4465-a56c-36d138a47382", "DataSource_d73fdb99-da74-4465-a56c-36d138a47382"], "value": [3.1416, 3.1316, 3.1216000000000004, 3.1116000000000006, 3.101600000000001]}</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/usr/bin/env python3</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> datetime</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> scipy <span class="im">as</span> sp</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> scipy.fftpack</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jq</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib <span class="im">as</span> plt</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyarrow <span class="im">as</span> pa</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datafusion <span class="im">import</span> SessionContext</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co"># plt.style.use('seaborn-poster')</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>dash_line <span class="op">=</span> <span class="st">"-"</span> <span class="op">*</span> <span class="dv">30</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>ctx <span class="op">=</span> SessionContext()</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="co"># There is a thousand parquet files in this directory</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> <span class="st">'../data/reusable/60m/'</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>ctx.register_parquet(<span class="st">"soma"</span>, d)</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>sql_cmd <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="st">  SELECT year, week, month, day, ts, dsuuid, value</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="st">    FROM soma</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="st">   WHERE ts &gt; 0 -- 1663368556001001</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="st">     AND dsuuid = 'DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44'</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="st">ORDER BY ts</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a><span class="st">   LIMIT 7000</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>rb <span class="op">=</span> ctx.sql(sql_cmd).collect()</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>t1 <span class="op">=</span> pa.Table.from_batches(rb)</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> t1.to_pandas()</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'date'</span>] <span class="op">=</span> pd.to_datetime(df[<span class="st">'ts'</span>] <span class="op">/</span><span class="fl">1000000.0</span>, unit<span class="op">=</span><span class="st">'s'</span>)</span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>first_fifteen <span class="op">=</span> df.head(<span class="dv">15</span>)</span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>last_fifteen <span class="op">=</span> df.tail(<span class="dv">15</span>)</span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(dash_line, <span class="st">"df.describe()</span><span class="ch">\n</span><span class="st">"</span>, df.describe())</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(dash_line, <span class="st">"first_fifteen</span><span class="ch">\n</span><span class="st">"</span>, first_fifteen)</span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(dash_line, <span class="st">"last_fifteen</span><span class="ch">\n</span><span class="st">"</span>, last_fifteen)</span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>df.head(<span class="dv">2200</span>).plot(kind<span class="op">=</span><span class="st">'scatter'</span>, x<span class="op">=</span><span class="st">'ts'</span>, y<span class="op">=</span><span class="st">'value'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>------------------------------ df.describe()
+          year    week   month     day            ts        value
+count  7000.0  7000.0  7000.0  7000.0  7.000000e+03  7000.000000
+mean   2019.0     9.0     3.0     1.0  1.551398e+15     2.641600
+std       0.0     0.0     0.0     0.0  9.185866e+06     0.288725
+min    2019.0     9.0     3.0     1.0  1.551398e+15     2.141600
+25%    2019.0     9.0     3.0     1.0  1.551398e+15     2.391600
+50%    2019.0     9.0     3.0     1.0  1.551398e+15     2.641600
+75%    2019.0     9.0     3.0     1.0  1.551398e+15     2.891600
+max    2019.0     9.0     3.0     1.0  1.551398e+15     3.141600
+------------------------------ first_fifteen
+     year  week  month  day                ts  \
+0   2019     9      3    1  1551398400000001   
+1   2019     9      3    1  1551398400004546   
+2   2019     9      3    1  1551398400009092   
+3   2019     9      3    1  1551398400013637   
+4   2019     9      3    1  1551398400018183   
+5   2019     9      3    1  1551398400022728   
+6   2019     9      3    1  1551398400027274   
+7   2019     9      3    1  1551398400031819   
+8   2019     9      3    1  1551398400036365   
+9   2019     9      3    1  1551398400040910   
+10  2019     9      3    1  1551398400045456   
+11  2019     9      3    1  1551398400050001   
+12  2019     9      3    1  1551398400054547   
+13  2019     9      3    1  1551398400059092   
+14  2019     9      3    1  1551398400063638   
+
+                                             dsuuid   value  \
+0   DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.1416   
+1   DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.1316   
+2   DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.1216   
+3   DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.1116   
+4   DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.1016   
+5   DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0916   
+6   DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0816   
+7   DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0716   
+8   DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0616   
+9   DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0516   
+10  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0416   
+11  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0316   
+12  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0216   
+13  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0116   
+14  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0016   
+
+                            date  
+0  2019-03-01 00:00:00.000001024  
+1  2019-03-01 00:00:00.004546048  
+2  2019-03-01 00:00:00.009092096  
+3  2019-03-01 00:00:00.013637120  
+4  2019-03-01 00:00:00.018182912  
+5  2019-03-01 00:00:00.022727936  
+6  2019-03-01 00:00:00.027273984  
+7  2019-03-01 00:00:00.031819008  
+8  2019-03-01 00:00:00.036365056  
+9  2019-03-01 00:00:00.040910080  
+10 2019-03-01 00:00:00.045455872  
+11 2019-03-01 00:00:00.050000896  
+12 2019-03-01 00:00:00.054546944  
+13 2019-03-01 00:00:00.059091968  
+14 2019-03-01 00:00:00.063638016  
+------------------------------ last_fifteen
+       year  week  month  day                ts  \
+6985  2019     9      3    1  1551398431750318   
+6986  2019     9      3    1  1551398431754864   
+6987  2019     9      3    1  1551398431759409   
+6988  2019     9      3    1  1551398431763955   
+6989  2019     9      3    1  1551398431768500   
+6990  2019     9      3    1  1551398431773046   
+6991  2019     9      3    1  1551398431777591   
+6992  2019     9      3    1  1551398431782137   
+6993  2019     9      3    1  1551398431786682   
+6994  2019     9      3    1  1551398431791228   
+6995  2019     9      3    1  1551398431795773   
+6996  2019     9      3    1  1551398431800319   
+6997  2019     9      3    1  1551398431804864   
+6998  2019     9      3    1  1551398431809410   
+6999  2019     9      3    1  1551398431813955   
+
+                                               dsuuid   value  \
+6985  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  2.9916   
+6986  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0016   
+6987  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0116   
+6988  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0216   
+6989  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0316   
+6990  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0416   
+6991  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0516   
+6992  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0616   
+6993  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0716   
+6994  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0816   
+6995  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0916   
+6996  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.1016   
+6997  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.1116   
+6998  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.1216   
+6999  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.1316   
+
+                              date  
+6985 2019-03-01 00:00:31.750318080  
+6986 2019-03-01 00:00:31.754863872  
+6987 2019-03-01 00:00:31.759408896  
+6988 2019-03-01 00:00:31.763955200  
+6989 2019-03-01 00:00:31.768499968  
+6990 2019-03-01 00:00:31.773046016  
+6991 2019-03-01 00:00:31.777591040  
+6992 2019-03-01 00:00:31.782136832  
+6993 2019-03-01 00:00:31.786681856  
+6994 2019-03-01 00:00:31.791228160  
+6995 2019-03-01 00:00:31.795772928  
+6996 2019-03-01 00:00:31.800318976  
+6997 2019-03-01 00:00:31.804864000  
+6998 2019-03-01 00:00:31.809410048  
+6999 2019-03-01 00:00:31.813955072  </code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>&lt;AxesSubplot: xlabel='ts', ylabel='value'&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="using-dlh_files/figure-html/cell-5-output-3.png" width="589" height="429"></p>
 </div>
 </div>
 
