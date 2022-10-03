@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-0.9.440">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2022-09-28">
+
+<title>SOMA Data Lakehouse - 01: Python 3 and DataFusion</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link id="quarto-text-highlighting-styles" href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">SOMA Data Lakehouse</span>
+  </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html">Home</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./using-dlh.html">Using the DLH</a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-tutorial" role="button" data-bs-toggle="dropdown" aria-expanded="false">Tutorial</a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-tutorial">    
+        <li>
+    <a class="dropdown-item" href="./tutorial-01.html">
+ <span class="dropdown-text">01: Python 3 with DataFusion</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./tutorial-02.html">
+ <span class="dropdown-text">02: FFT Analysis</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./tutorial-03.html">
+ <span class="dropdown-text">03: Arrow using Java</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="./about.html">About SOMA Data Lakehouse</a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">01: Python 3 and DataFusion</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">Tutorial</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">September 28, 2022</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#install-python-packages" id="toc-install-python-packages" class="nav-link" data-scroll-target="#install-python-packages">Install Python Packages</a>
+  <ul class="collapse">
+  <li><a href="#counting-total-rows-of-all-soma-data-source-measures-in-data-lakehouse" id="toc-counting-total-rows-of-all-soma-data-source-measures-in-data-lakehouse" class="nav-link" data-scroll-target="#counting-total-rows-of-all-soma-data-source-measures-in-data-lakehouse">Counting total rows of all SOMA Data Source measures in Data Lakehouse</a></li>
+  <li><a href="#counting-rows-grouping-by-uuid-of-soma-data-source" id="toc-counting-rows-grouping-by-uuid-of-soma-data-source" class="nav-link" data-scroll-target="#counting-rows-grouping-by-uuid-of-soma-data-source">Counting rows grouping by UUID of SOMA Data Source</a></li>
+  <li><a href="#read-a-parquet-dataset-and-display-first-five-rows" id="toc-read-a-parquet-dataset-and-display-first-five-rows" class="nav-link" data-scroll-target="#read-a-parquet-dataset-and-display-first-five-rows">Read a Parquet Dataset and display first five rows</a></li>
+  <li><a href="#plotting-the-time-signal" id="toc-plotting-the-time-signal" class="nav-link" data-scroll-target="#plotting-the-time-signal">Plotting the time signal</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>We can use DataFusion queru Engine in Python 3 Scripts and Jupyter Notebooks.</p>
+<p>Below is an illustrative example of how to use SQL with Arrow and Datafusion in Python 3 language.</p>
+</section>
+<section id="install-python-packages" class="level2">
+<h2 class="anchored" data-anchor-id="install-python-packages">Install Python Packages</h2>
+<p>First of all you need install some packages using pip3</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip3</span> install jq pyarrow datafusion pandas matplotlib scipy</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="counting-total-rows-of-all-soma-data-source-measures-in-data-lakehouse" class="level3">
+<h3 class="anchored" data-anchor-id="counting-total-rows-of-all-soma-data-source-measures-in-data-lakehouse">Counting total rows of all SOMA Data Source measures in Data Lakehouse</h3>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/usr/bin/env python3</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyarrow <span class="im">as</span> pa</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datafusion <span class="im">import</span> SessionContext</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>ctx <span class="op">=</span> SessionContext()</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># There is a thousand parquet files in this directory</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> <span class="st">'../data/reusable/'</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>ctx.register_parquet(<span class="st">"soma"</span>, d)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>sql_cmd <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="st"> SELECT count(ts) as qty</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="st">   FROM soma</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>rb <span class="op">=</span> ctx.sql(sql_cmd).collect()</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>t1 <span class="op">=</span> pa.Table.from_batches(rb)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Quantidade de registros no Dataset ="</span>, t1[<span class="dv">0</span>][<span class="dv">0</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Quantidade de registros no Dataset = 11484000</code></pre>
+</div>
+</div>
+</section>
+<section id="counting-rows-grouping-by-uuid-of-soma-data-source" class="level3">
+<h3 class="anchored" data-anchor-id="counting-rows-grouping-by-uuid-of-soma-data-source">Counting rows grouping by UUID of SOMA Data Source</h3>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/usr/bin/env python3</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyarrow <span class="im">as</span> pa</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datafusion <span class="im">import</span> SessionContext</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>ctx <span class="op">=</span> SessionContext()</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># There is a bunch of parquet files in this directory</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> <span class="st">'../data/reusable/'</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>ctx.register_parquet(<span class="st">"soma"</span>, d)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>sql_cmd <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="st">  SELECT dsuuid,  count(dsuuid) as qty</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="st">    FROM soma</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="st">GROUP BY dsuuid</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>rb <span class="op">=</span> ctx.sql(sql_cmd).collect()</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>t1 <span class="op">=</span> pa.Table.from_batches(rb)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> t1.to_pandas()</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                             dsuuid     qty
+0   DataSource_609574d4-e153-445f-a37c-b893ecb0c5fd  396000
+1   DataSource_78686cdb-4144-4c6f-9e7e-66ba06871328  396000
+2   DataSource_cbe8a9af-2d93-47e6-88c9-7991f71168c2  396000
+3   DataSource_e0bdb337-49ae-468e-93b1-be1dd96baed3  396000
+4   DataSource_d85a1f65-57eb-4362-a791-ccff043acf43  396000
+5   DataSource_ac7c39d3-7bdd-4f2a-a075-5b24da3137e0  396000
+6   DataSource_4c3fd574-3795-4af3-959f-d5e433065db7  396000
+7   DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  396000
+8   DataSource_270a0dd5-7868-4431-a29d-374a6f221693  396000
+9   DataSource_da2a80a7-a610-4a32-adae-6e829db2c889  792000
+10  DataSource_6233a59a-d614-4d1e-ab48-a0e8958523fc  396000
+11  DataSource_686af5de-ea63-4250-bcf5-1a5e791d3f1a  792000
+12  DataSource_d73fdb99-da74-4465-a56c-36d138a47382  792000
+13  DataSource_1d1adb59-f1d3-4e71-a0a4-cd124c0bea0b  396000
+14  DataSource_1116286a-d12a-4a0c-b421-c9b57dd7f008  792000
+15  DataSource_d3ab801b-ec8e-4208-952e-d92dc16627db  396000
+16  DataSource_e3590d55-c908-4734-abdb-d99c2c651e65  792000
+17  DataSource_1f313b4b-078f-42e3-a205-069b1a3ce3cc  396000
+18  DataSource_9bb6bdda-fb8c-4c02-88fc-fd73fda6f14a  792000
+19  DataSource_dd860dd6-1450-46a8-8d9c-e9ab9b47f7e6  396000
+20  DataSource_18de68d3-e1d3-45d6-b3da-7a851067aeaa  396000
+21  DataSource_7cc50f92-9c10-4527-95ec-4b952718352b  792000</code></pre>
+</div>
+</div>
+</section>
+<section id="read-a-parquet-dataset-and-display-first-five-rows" class="level3">
+<h3 class="anchored" data-anchor-id="read-a-parquet-dataset-and-display-first-five-rows">Read a Parquet Dataset and display first five rows</h3>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/usr/bin/env python3</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> jq</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyarrow <span class="im">as</span> pa</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datafusion <span class="im">import</span> SessionContext</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>ctx <span class="op">=</span> SessionContext()</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co"># There is a thousand parquet files in this directory</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> <span class="st">'../data/reusable/'</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>ctx.register_parquet(<span class="st">"soma"</span>, d)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>sql_cmd <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="st"> SELECT year, week, ts, dsuuid, value</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="st">   FROM soma</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>rb <span class="op">=</span> ctx.sql(sql_cmd).collect()</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>t1 <span class="op">=</span> pa.Table.from_batches(rb)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> t1.to_pandas()</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>first_five <span class="op">=</span> df.head()</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.describe())</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(first_five)</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>t2 <span class="op">=</span> pa.Table.from_pandas(first_five)</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(jq.<span class="bu">compile</span>(<span class="st">'.'</span>).<span class="bu">input</span>(t2.to_pydict()).text())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             year        week            ts         value
+count  11484000.0  11484000.0  1.148400e+07  1.148400e+07
+mean       2019.0         9.0  1.551399e+15  2.641600e+00
+std           0.0         0.0  4.328606e+08  2.887040e-01
+min        2019.0         9.0  1.551398e+15  2.141600e+00
+25%        2019.0         9.0  1.551398e+15  2.391600e+00
+50%        2019.0         9.0  1.551399e+15  2.641600e+00
+75%        2019.0         9.0  1.551399e+15  2.891600e+00
+max        2019.0         9.0  1.551400e+15  3.141600e+00
+   year  week                ts  \
+0  2019     9  1551398519988001   
+1  2019     9  1551398519988455   
+2  2019     9  1551398519988910   
+3  2019     9  1551398519989364   
+4  2019     9  1551398519989819   
+
+                                            dsuuid   value  
+0  DataSource_cbe8a9af-2d93-47e6-88c9-7991f71168c2  3.1416  
+1  DataSource_cbe8a9af-2d93-47e6-88c9-7991f71168c2  3.1316  
+2  DataSource_cbe8a9af-2d93-47e6-88c9-7991f71168c2  3.1216  
+3  DataSource_cbe8a9af-2d93-47e6-88c9-7991f71168c2  3.1116  
+4  DataSource_cbe8a9af-2d93-47e6-88c9-7991f71168c2  3.1016  
+{"year": [2019, 2019, 2019, 2019, 2019], "week": [9, 9, 9, 9, 9], "ts": [1551398519988001, 1551398519988455, 1551398519988910, 1551398519989364, 1551398519989819], "dsuuid": ["DataSource_cbe8a9af-2d93-47e6-88c9-7991f71168c2", "DataSource_cbe8a9af-2d93-47e6-88c9-7991f71168c2", "DataSource_cbe8a9af-2d93-47e6-88c9-7991f71168c2", "DataSource_cbe8a9af-2d93-47e6-88c9-7991f71168c2", "DataSource_cbe8a9af-2d93-47e6-88c9-7991f71168c2"], "value": [3.1416, 3.1316, 3.1216000000000004, 3.1116000000000006, 3.101600000000001]}</code></pre>
+</div>
+</div>
+</section>
+<section id="plotting-the-time-signal" class="level3">
+<h3 class="anchored" data-anchor-id="plotting-the-time-signal">Plotting the time signal</h3>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/usr/bin/env python3</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyarrow <span class="im">as</span> pa</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datafusion <span class="im">import</span> SessionContext</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>dash_line <span class="op">=</span> <span class="st">"-"</span> <span class="op">*</span> <span class="dv">30</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>ctx <span class="op">=</span> SessionContext()</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co"># There is a thousand parquet files in this directory</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> <span class="st">'../data/reusable/60m/'</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>ctx.register_parquet(<span class="st">"soma"</span>, d)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>sql_cmd <span class="op">=</span> <span class="st">"""</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="st">  SELECT year, week, month, day, ts, dsuuid, value</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="st">    FROM soma</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="st">   WHERE ts &gt; 0 -- 1663368556001001</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="st">     AND dsuuid = 'DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44'</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="st">ORDER BY ts</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="st">   LIMIT 7000</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="st">"""</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>rb <span class="op">=</span> ctx.sql(sql_cmd).collect()</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>t1 <span class="op">=</span> pa.Table.from_batches(rb)</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> t1.to_pandas()</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'date'</span>] <span class="op">=</span> pd.to_datetime(df[<span class="st">'ts'</span>] <span class="op">/</span><span class="fl">1000000.0</span>, unit<span class="op">=</span><span class="st">'s'</span>)</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>first_fifteen <span class="op">=</span> df.head(<span class="dv">15</span>)</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>last_fifteen <span class="op">=</span> df.tail(<span class="dv">15</span>)</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(dash_line, <span class="st">"df.describe()</span><span class="ch">\n</span><span class="st">"</span>, df.describe())</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(dash_line, <span class="st">"first_fifteen</span><span class="ch">\n</span><span class="st">"</span>, first_fifteen)</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(dash_line, <span class="st">"last_fifteen</span><span class="ch">\n</span><span class="st">"</span>, last_fifteen)</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>df.head(<span class="dv">2200</span>).plot(kind<span class="op">=</span><span class="st">'scatter'</span>, x<span class="op">=</span><span class="st">'ts'</span>, y<span class="op">=</span><span class="st">'value'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>------------------------------ df.describe()
+          year    week   month     day            ts        value
+count  7000.0  7000.0  7000.0  7000.0  7.000000e+03  7000.000000
+mean   2019.0     9.0     3.0     1.0  1.551398e+15     2.641600
+std       0.0     0.0     0.0     0.0  9.184855e+05     0.288725
+min    2019.0     9.0     3.0     1.0  1.551398e+15     2.141600
+25%    2019.0     9.0     3.0     1.0  1.551398e+15     2.391600
+50%    2019.0     9.0     3.0     1.0  1.551398e+15     2.641600
+75%    2019.0     9.0     3.0     1.0  1.551398e+15     2.891600
+max    2019.0     9.0     3.0     1.0  1.551398e+15     3.141600
+------------------------------ first_fifteen
+     year  week  month  day                ts  \
+0   2019     9      3    1  1551398400000001   
+1   2019     9      3    1  1551398400000455   
+2   2019     9      3    1  1551398400000910   
+3   2019     9      3    1  1551398400001364   
+4   2019     9      3    1  1551398400001819   
+5   2019     9      3    1  1551398400002273   
+6   2019     9      3    1  1551398400002728   
+7   2019     9      3    1  1551398400003182   
+8   2019     9      3    1  1551398400003637   
+9   2019     9      3    1  1551398400004091   
+10  2019     9      3    1  1551398400004546   
+11  2019     9      3    1  1551398400005000   
+12  2019     9      3    1  1551398400005455   
+13  2019     9      3    1  1551398400005909   
+14  2019     9      3    1  1551398400006364   
+
+                                             dsuuid   value  \
+0   DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.1416   
+1   DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.1316   
+2   DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.1216   
+3   DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.1116   
+4   DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.1016   
+5   DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0916   
+6   DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0816   
+7   DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0716   
+8   DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0616   
+9   DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0516   
+10  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0416   
+11  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0316   
+12  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0216   
+13  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0116   
+14  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0016   
+
+                            date  
+0  2019-03-01 00:00:00.000001024  
+1  2019-03-01 00:00:00.000454912  
+2  2019-03-01 00:00:00.000910080  
+3  2019-03-01 00:00:00.001363968  
+4  2019-03-01 00:00:00.001818880  
+5  2019-03-01 00:00:00.002273024  
+6  2019-03-01 00:00:00.002727936  
+7  2019-03-01 00:00:00.003181824  
+8  2019-03-01 00:00:00.003636992  
+9  2019-03-01 00:00:00.004091136  
+10 2019-03-01 00:00:00.004546048  
+11 2019-03-01 00:00:00.005000192  
+12 2019-03-01 00:00:00.005455104  
+13 2019-03-01 00:00:00.005908992  
+14 2019-03-01 00:00:00.006364160  
+------------------------------ last_fifteen
+       year  week  month  day                ts  \
+6985  2019     9      3    1  1551398403174683   
+6986  2019     9      3    1  1551398403175138   
+6987  2019     9      3    1  1551398403175592   
+6988  2019     9      3    1  1551398403176047   
+6989  2019     9      3    1  1551398403176501   
+6990  2019     9      3    1  1551398403176956   
+6991  2019     9      3    1  1551398403177410   
+6992  2019     9      3    1  1551398403177865   
+6993  2019     9      3    1  1551398403178319   
+6994  2019     9      3    1  1551398403178774   
+6995  2019     9      3    1  1551398403179228   
+6996  2019     9      3    1  1551398403179683   
+6997  2019     9      3    1  1551398403180137   
+6998  2019     9      3    1  1551398403180592   
+6999  2019     9      3    1  1551398403181046   
+
+                                               dsuuid   value  \
+6985  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  2.9916   
+6986  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0016   
+6987  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0116   
+6988  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0216   
+6989  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0316   
+6990  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0416   
+6991  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0516   
+6992  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0616   
+6993  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0716   
+6994  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0816   
+6995  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.0916   
+6996  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.1016   
+6997  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.1116   
+6998  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.1216   
+6999  DataSource_00f837fb-8c29-4123-ab02-51bb110f0f44  3.1316   
+
+                              date  
+6985 2019-03-01 00:00:03.174683136  
+6986 2019-03-01 00:00:03.175138048  
+6987 2019-03-01 00:00:03.175591936  
+6988 2019-03-01 00:00:03.176047104  
+6989 2019-03-01 00:00:03.176500992  
+6990 2019-03-01 00:00:03.176955904  
+6991 2019-03-01 00:00:03.177409792  
+6992 2019-03-01 00:00:03.177864960  
+6993 2019-03-01 00:00:03.178319104  
+6994 2019-03-01 00:00:03.178774016  
+6995 2019-03-01 00:00:03.179228160  
+6996 2019-03-01 00:00:03.179683072  
+6997 2019-03-01 00:00:03.180136960  
+6998 2019-03-01 00:00:03.180592128  
+6999 2019-03-01 00:00:03.181046016  </code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>&lt;AxesSubplot: xlabel='ts', ylabel='value'&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="tutorial-01_files/figure-html/cell-5-output-3.png" width="589" height="429"></p>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
